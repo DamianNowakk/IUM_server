@@ -1,29 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using FridgeRestServer;
+using FridgeRestServer.Models;
 
 namespace FridgeRestServer.Controllers
 {
     public class PersonController : ApiController
     {
-        // GET: api/Person
-        public IEnumerable<string> Get()
+        private readonly SqlExecutor _sqlExecutor;
+
+        public PersonController()
         {
-            return new string[] { "value1", "value2" };
+            _sqlExecutor = new SqlExecutor();
+        }
+
+        // GET: api/Person
+        public IEnumerable<Person> Get()
+        {
+            return _sqlExecutor.GetAll();
         }
 
         // GET: api/Person/5
-        public string Get(int id)
+        public Person Get(int id)
         {
-            return "value";
+            return _sqlExecutor.Get(id);
         }
 
         // POST: api/Person
-        public void Post([FromBody]string value)
+        public HttpResponseMessage Post([FromBody]Person person)
         {
+            _sqlExecutor.AddPerson(person);
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created);
+            response.Headers.Location = new Uri(Request.RequestUri, $"person/{person.Id}");
+            return response;
         }
 
         // PUT: api/Person/5

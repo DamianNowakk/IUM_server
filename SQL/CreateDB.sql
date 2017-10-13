@@ -10,7 +10,7 @@ GO
 
 USE FridgeDB;
 
-CREATE TABLE Persons (
+CREATE TABLE Person (
     id int IDENTITY(1,1) PRIMARY KEY,
     login varchar(255) NOT NULL,
     password varchar(255) NOT NULL
@@ -36,5 +36,3 @@ VALUES ( 1, 'test', 2.5, 5);
 
 INSERT INTO Product
 VALUES ( 1, 'test2', 1, 1);
-
-SHUTDOWN WITH NOWAIT
