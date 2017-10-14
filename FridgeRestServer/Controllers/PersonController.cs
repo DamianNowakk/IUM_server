@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using FridgeRestServer;
 using FridgeRestServer.Models;
@@ -12,43 +13,44 @@ namespace FridgeRestServer.Controllers
 {
     public class PersonController : ApiController
     {
-        private readonly SqlExecutor _sqlExecutor;
+        private readonly SqlExecutorPerson _sqlExecutorPerson;
 
         public PersonController()
         {
-            _sqlExecutor = new SqlExecutor();
+            _sqlExecutorPerson = new SqlExecutorPerson();
         }
-
+                
         // GET: api/Person
-        public IEnumerable<Person> Get()
+        public HttpResponseMessage Get(string login, string password)
         {
-            return _sqlExecutor.GetAll();
-        }
-
-        // GET: api/Person/5
-        public Person Get(int id)
-        {
-            return _sqlExecutor.Get(id);
+            HttpResponseMessage response;
+            if (_sqlExecutorPerson.GetPerson(login, password) != null)
+            {
+                response = Request.CreateResponse(HttpStatusCode.OK);
+            }
+            else
+            {
+                response = Request.CreateResponse(HttpStatusCode.Unauthorized);               
+            }
+            return response;
         }
 
         // POST: api/Person
         public HttpResponseMessage Post([FromBody]Person person)
         {
-            _sqlExecutor.AddPerson(person);
-
-            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created);
-            response.Headers.Location = new Uri(Request.RequestUri, $"person/{person.Id}");
+            HttpResponseMessage response;
+            try
+            {
+                _sqlExecutorPerson.AddPerson(person);
+                response = Request.CreateResponse(HttpStatusCode.Created);
+            }
+            catch (Exception e) // TO DO
+            {
+                response = Request.CreateResponse(HttpStatusCode.Conflict);
+                response.Content = new StringContent($"login: {person.Login} is exist", Encoding.Unicode);
+            }
+           
             return response;
-        }
-
-        // PUT: api/Person/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Person/5
-        public void Delete(int id)
-        {
         }
     }
 }

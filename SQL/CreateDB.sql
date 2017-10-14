@@ -11,28 +11,27 @@ GO
 USE FridgeDB;
 
 CREATE TABLE Person (
-    id int IDENTITY(1,1) PRIMARY KEY,
-    login varchar(255) NOT NULL,
+    login varchar(255) PRIMARY KEY,
     password varchar(255) NOT NULL
 );
 
 CREATE TABLE Product (
     id int IDENTITY(1,1) PRIMARY KEY,
-	persons_id int NOT NULL,
+	person_login varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
 	price  decimal NOT NULL,
     amount  integer NOT NULL,
 	CONSTRAINT fk_persons_id
-		FOREIGN KEY (persons_id)
-		REFERENCES Persons(Id) ON DELETE CASCADE
+		FOREIGN KEY (persons_login)
+		REFERENCES Person(login) ON DELETE CASCADE
 );
 
 
-INSERT INTO Persons
+INSERT INTO Person
 VALUES ( 'admin', 'admin');
 
 INSERT INTO Product
-VALUES ( 1, 'test', 2.5, 5);
+VALUES ( 'admin', 'test', 2.5, 5);
 
 INSERT INTO Product
-VALUES ( 1, 'test2', 1, 1);
+VALUES ( 'admin', 'test2', 1, 1);
