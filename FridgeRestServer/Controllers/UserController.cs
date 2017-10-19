@@ -11,22 +11,23 @@ using FridgeRestServer.Models;
 
 namespace FridgeRestServer.Controllers
 {
-    public class PersonController : ApiController
+    public class UserController : ApiController
     {
-        private readonly SqlExecutorPerson _sqlExecutorPerson;
+        private readonly SqlExecutorUser _sqlExecutorUser;
 
-        public PersonController()
+        public UserController()
         {
-            _sqlExecutorPerson = new SqlExecutorPerson();
+            _sqlExecutorUser = new SqlExecutorUser();
         }
                 
-        // GET: api/Person
+        // GET: api/User
         public HttpResponseMessage Get(string login, string password)
         {
             HttpResponseMessage response;
-            if (_sqlExecutorPerson.GetPerson(login, password) != null)
+            var user = _sqlExecutorUser.GetUser(login, password);
+            if (user != null)
             {
-                response = Request.CreateResponse(HttpStatusCode.OK);
+                response = Request.CreateResponse(HttpStatusCode.OK, user);
             }
             else
             {
@@ -35,19 +36,19 @@ namespace FridgeRestServer.Controllers
             return response;
         }
 
-        // POST: api/Person
-        public HttpResponseMessage Post([FromBody]Person person)
+        // POST: api/User
+        public HttpResponseMessage Post([FromBody]User user)
         {
             HttpResponseMessage response;
             try
             {
-                _sqlExecutorPerson.AddPerson(person);
+                _sqlExecutorUser.AddUser(user);
                 response = Request.CreateResponse(HttpStatusCode.Created);
             }
             catch (Exception e) // TO DO
             {
                 response = Request.CreateResponse(HttpStatusCode.Conflict);
-                response.Content = new StringContent($"login: {person.Login} is exist", Encoding.Unicode);
+                response.Content = new StringContent($"login: {user.Login} is exist", Encoding.Unicode);
             }
            
             return response;

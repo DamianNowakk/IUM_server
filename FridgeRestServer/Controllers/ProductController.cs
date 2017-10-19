@@ -12,21 +12,21 @@ namespace FridgeRestServer.Controllers
     public class ProductController : ApiController
     {
         private readonly SqlExecutorProduct _sqlExecutorProduct;
-        private readonly SqlExecutorPerson _sqlExecutorPerson;
+        private readonly SqlExecutorUser _sqlExecutorUser;
 
         public ProductController()
         {
             _sqlExecutorProduct = new SqlExecutorProduct();
-            _sqlExecutorPerson = new SqlExecutorPerson();
+            _sqlExecutorUser = new SqlExecutorUser();
         }
 
         // GET: api/Product
         public IEnumerable<Product> Get(string login, string password)
         {
-            var person = _sqlExecutorPerson.GetPerson(login, password);
-            if (person != null)
+            var user = _sqlExecutorUser.GetUser(login, password);
+            if (user != null)
             {
-                return _sqlExecutorProduct.GetAllProducts(person);
+                return _sqlExecutorProduct.GetAllProducts(user);
             }
 
             return null;
@@ -35,10 +35,10 @@ namespace FridgeRestServer.Controllers
         // GET: api/Product/5
         public Product Get(int id, string login, string password)
         {
-            var person = _sqlExecutorPerson.GetPerson(login, password);
-            if (person != null)
+            var user = _sqlExecutorUser.GetUser(login, password);
+            if (user != null)
             {
-                return _sqlExecutorProduct.GetProduct(id, person);
+                return _sqlExecutorProduct.GetProduct(id, user);
             }
             return null;
         }
@@ -47,10 +47,10 @@ namespace FridgeRestServer.Controllers
         public HttpResponseMessage Post([FromBody]Product product, string login, string password)
         {
             HttpResponseMessage response;
-            var person = _sqlExecutorPerson.GetPerson(login, password);
-            if (person != null)
+            var user = _sqlExecutorUser.GetUser(login, password);
+            if (user != null)
             {
-                product.PersonLogin = login;
+                product.UserLogin = login;
                 _sqlExecutorProduct.AddProduct(product);
                 response = Request.CreateResponse(HttpStatusCode.Created);
                 response.Headers.Location = new Uri(Request.RequestUri, $"Product/{product.Id}");
@@ -66,8 +66,8 @@ namespace FridgeRestServer.Controllers
         public HttpResponseMessage Put([FromBody]Product product,int id, string login, string password)
         {
             HttpResponseMessage response;
-            var person = _sqlExecutorPerson.GetPerson(login, password);
-            if (person != null)
+            var user = _sqlExecutorUser.GetUser(login, password);
+            if (user != null)
             {
                 product.Id = id;
                 _sqlExecutorProduct.UpdateProduct(product);
@@ -84,8 +84,8 @@ namespace FridgeRestServer.Controllers
         public HttpResponseMessage Delete(int id, string login, string password)
         {
             HttpResponseMessage response;
-            var person = _sqlExecutorPerson.GetPerson(login, password);
-            if (person != null)
+            var user = _sqlExecutorUser.GetUser(login, password);
+            if (user != null)
             {             
                 _sqlExecutorProduct.DeleteProduct(id);
                 response = Request.CreateResponse(HttpStatusCode.OK);

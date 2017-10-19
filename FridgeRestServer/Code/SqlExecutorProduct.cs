@@ -17,22 +17,22 @@ namespace FridgeRestServer.Controllers
         private string _connectionStrings = ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString;
         private IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString); // TO DO
 
-        public Product GetProduct(int id, Person person)
+        public Product GetProduct(int id, User user)
         {
 
-            var sqlQuery = $"SELECT * FROM Product WHERE  id = {id} AND person_login = '{person.Login}'";
+            var sqlQuery = $"SELECT * FROM Product WHERE  id = {id} AND accountLogin = '{user.Login}'";
             return this.db.Query<Product>(sqlQuery).SingleOrDefault();
         }
 
-        public List<Product> GetAllProducts(Person person)
+        public List<Product> GetAllProducts(User user)
         {
-            var sqlQuery = $"SELECT * FROM Product WHERE person_login = '{person.Login}'";
+            var sqlQuery = $"SELECT * FROM Product WHERE accountLogin = '{user.Login}'";
             return this.db.Query<Product>(sqlQuery).ToList();
         }
 
         public void AddProduct(Product product)
         {
-            const string sqlQuery = "INSERT INTO Product(person_login,name,price,amount) values(@Person_login,@Name,@Price,@Amount); SELECT CAST(SCOPE_IDENTITY() as int)";
+            const string sqlQuery = "INSERT INTO Product(accountLogin,name,price,amount) values(@UserLogin,@Name,@Price,@Amount); SELECT CAST(SCOPE_IDENTITY() as int)";
             var returnId = this.db.Query<int>(sqlQuery, product).SingleOrDefault();
             product.Id = returnId;
         }
@@ -42,8 +42,8 @@ namespace FridgeRestServer.Controllers
             var sqlQuery = SQL
                 .UPDATE("Product");
 
-            if (product.PersonLogin != null)
-                sqlQuery.SET("person_login = @Person_login");
+            if (product.UserLogin != null)
+                sqlQuery.SET("accountLogin = @UserLogin");
             if (product.Name != null)
                 sqlQuery.SET("name = @Name");
             if (product.Price != null)
