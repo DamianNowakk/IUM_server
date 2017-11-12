@@ -17,12 +17,12 @@ CREATE TABLE Account (
 
 CREATE TABLE Product (
     id int IDENTITY(1,1) PRIMARY KEY,
-	accountLogin varchar(255) NOT NULL,
+	userLogin varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
-	price  decimal NOT NULL,
-    amount  integer NOT NULL,
+	price decimal(16,2) NOT NULL,
+    amount integer NOT NULL,
 	CONSTRAINT fk_persons_id
-		FOREIGN KEY (accountLogin)
+		FOREIGN KEY (userLogin)
 		REFERENCES Account(login) ON DELETE CASCADE
 );
 
@@ -33,8 +33,17 @@ VALUES ( 'admin', 'admin');
 INSERT INTO Account
 VALUES ( 'a', 'a');
 
+USE FridgeDB;
+
 INSERT INTO Product
 VALUES ( 'admin', 'test', 2.5, 5);
-
+INSERT INTO Product
+VALUES ( 'admin', 'test2', 1, 1);
+INSERT INTO Product
+VALUES ( 'admin', 'test2', 1, 1);
+INSERT INTO Product
+VALUES ( 'admin', 'test2', 1, 1);
+INSERT INTO Product
+VALUES ( 'admin', 'test2', 1, 1);
 INSERT INTO Product
 VALUES ( 'admin', 'test2', 1, 1);

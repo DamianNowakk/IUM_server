@@ -17,22 +17,22 @@ namespace FridgeRestServer.Controllers
         private string _connectionStrings = ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString;
         private IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString); // TO DO
 
-        public Product GetProduct(int id, User user)
+        public Product GetProduct(int id)
         {
 
-            var sqlQuery = $"SELECT * FROM Product WHERE  id = {id} AND accountLogin = '{user.Login}'";
+            var sqlQuery = $"SELECT * FROM Product WHERE  id = {id}";
             return this.db.Query<Product>(sqlQuery).SingleOrDefault();
         }
 
         public List<Product> GetAllProducts(User user)
         {
-            var sqlQuery = $"SELECT * FROM Product WHERE accountLogin = '{user.Login}'";
+            var sqlQuery = $"SELECT * FROM Product WHERE userLogin = '{user.Login}'";
             return this.db.Query<Product>(sqlQuery).ToList();
         }
 
         public void AddProduct(Product product)
         {
-            const string sqlQuery = "INSERT INTO Product(accountLogin,name,price,amount) values(@UserLogin,@Name,@Price,@Amount); SELECT CAST(SCOPE_IDENTITY() as int)";
+            const string sqlQuery = "INSERT INTO Product(userLogin,name,price,amount) values(@UserLogin,@Name,@Price,@Amount); SELECT CAST(SCOPE_IDENTITY() as int)";
             var returnId = this.db.Query<int>(sqlQuery, product).SingleOrDefault();
             product.Id = returnId;
         }
@@ -43,7 +43,7 @@ namespace FridgeRestServer.Controllers
                 .UPDATE("Product");
 
             if (product.UserLogin != null)
-                sqlQuery.SET("accountLogin = @UserLogin");
+                sqlQuery.SET("userLogin = @UserLogin");
             if (product.Name != null)
                 sqlQuery.SET("name = @Name");
             if (product.Price != null)
@@ -54,6 +54,15 @@ namespace FridgeRestServer.Controllers
             sqlQuery.WHERE("id=@Id");
 
             this.db.Query(sqlQuery.ToString(), product);
+        }
+
+        public void UpdateAmount(int id, int value)
+        {
+            var product = GetProduct(id);
+            product.Amount += value;
+            if (product.Amount < 0)
+                product.Amount = 0;
+            UpdateProduct(product);
         }
 
         public void DeleteProduct(int id)

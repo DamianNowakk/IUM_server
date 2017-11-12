@@ -43,7 +43,7 @@ namespace FridgeRestServer.Controllers
             try
             {
                 _sqlExecutorUser.AddUser(user);
-                response = Request.CreateResponse(HttpStatusCode.Created);
+                response = Request.CreateResponse(HttpStatusCode.Created, user);
             }
             catch (Exception e) // TO DO
             {

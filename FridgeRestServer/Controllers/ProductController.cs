@@ -26,7 +26,8 @@ namespace FridgeRestServer.Controllers
             var user = _sqlExecutorUser.GetUser(login, password);
             if (user != null)
             {
-                return _sqlExecutorProduct.GetAllProducts(user);
+                var allProducts = _sqlExecutorProduct.GetAllProducts(user);
+                return allProducts;
             }
 
             return null;
@@ -38,7 +39,8 @@ namespace FridgeRestServer.Controllers
             var user = _sqlExecutorUser.GetUser(login, password);
             if (user != null)
             {
-                return _sqlExecutorProduct.GetProduct(id, user);
+                var product = _sqlExecutorProduct.GetProduct(id);
+                return product;
             }
             return null;
         }
@@ -71,6 +73,24 @@ namespace FridgeRestServer.Controllers
             {
                 product.Id = id;
                 _sqlExecutorProduct.UpdateProduct(product);
+                response = Request.CreateResponse(HttpStatusCode.OK);
+            }
+            else
+            {
+                response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+            return response;
+        }
+
+        // PUT:
+        [Route("api/Product/{id}/UpdateAmount/{value}")]
+        public HttpResponseMessage Putincrease(int id,int value, string login, string password)
+        {
+            HttpResponseMessage response;
+            var user = _sqlExecutorUser.GetUser(login, password);
+            if (user != null)
+            {
+                _sqlExecutorProduct.UpdateAmount(id, value);
                 response = Request.CreateResponse(HttpStatusCode.OK);
             }
             else
