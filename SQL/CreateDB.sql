@@ -46,4 +46,4 @@ VALUES ( 'admin', 'test2', 1, 1);
 INSERT INTO Product
 VALUES ( 'admin', 'test2', 1, 1);
 INSERT INTO Product
-VALUES ( 'admin', 'test2', 1, 1);
+VALUES ( 'admin', 'hahahahha', 1, 1);
