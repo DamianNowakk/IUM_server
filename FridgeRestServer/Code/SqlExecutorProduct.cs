@@ -8,6 +8,7 @@ using System.Text;
 using System.Web;
 using Dapper;
 using DbExtensions;
+using FridgeRestServer.Code;
 using FridgeRestServer.Models;
 
 namespace FridgeRestServer.Controllers
@@ -16,24 +17,44 @@ namespace FridgeRestServer.Controllers
     {
         private string _connectionStrings = ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString;
         private IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString); // TO DO
+        private SqlExecutorAmount sqlExecutorAmount;
+
+        public SqlExecutorProduct()
+        {
+            sqlExecutorAmount = new SqlExecutorAmount();
+        }
+
+        private void FillProductAmount(Product product)
+        {
+            var amounts = sqlExecutorAmount.GetAmounts(product.Id);
+            product.Amount = Amount.getAmount(amounts);
+        }
 
         public Product GetProduct(int id)
         {
-
             var sqlQuery = $"SELECT * FROM Product WHERE  id = {id}";
-            return this.db.Query<Product>(sqlQuery).SingleOrDefault();
+            var product = this.db.Query<Product>(sqlQuery).SingleOrDefault();
+            FillProductAmount(product);
+
+            return product;
         }
 
         public List<Product> GetAllProducts(User user)
         {
             var sqlQuery = $"SELECT * FROM Product WHERE userLogin = '{user.Login}'";
-            return this.db.Query<Product>(sqlQuery).ToList();
+            var products = this.db.Query<Product>(sqlQuery).ToList();
+            foreach (var product in products)
+            {
+                FillProductAmount(product);
+            }
+            return products;
         }
 
-        public void AddProduct(Product product)
+        public void AddProduct(Product product, string guid)
         {
-            const string sqlQuery = "INSERT INTO Product(userLogin,name,price,amount) values(@UserLogin,@Name,@Price,@Amount); SELECT CAST(SCOPE_IDENTITY() as int)";
+            const string sqlQuery = "INSERT INTO Product(userLogin,name,price) values(@UserLogin,@Name,@Price); SELECT CAST(SCOPE_IDENTITY() as int)";
             var returnId = this.db.Query<int>(sqlQuery, product).SingleOrDefault();
+            sqlExecutorAmount.CreateAmount(returnId, guid);
             product.Id = returnId;
         }
 
@@ -48,21 +69,30 @@ namespace FridgeRestServer.Controllers
                 sqlQuery.SET("name = @Name");
             if (product.Price != null)
                 sqlQuery.SET("price = @Price");
-            if (product.Amount != null)
-                sqlQuery.SET("amount = @Amount");
 
             sqlQuery.WHERE("id=@Id");
 
             this.db.Query(sqlQuery.ToString(), product);
         }
 
-        public void UpdateAmount(int id, int value)
+        public void UpdateAmount(int id, int value, string guid)
         {
-            var product = GetProduct(id);
-            product.Amount += value;
-            if (product.Amount < 0)
-                product.Amount = 0;
-            UpdateProduct(product);
+            var amount = sqlExecutorAmount.GetAmount(id, guid);
+            if (amount == null)
+            {
+                amount = new Amount()
+                {
+                    Guid = guid,
+                    ProductId = id,
+                    Value = value
+                };
+                sqlExecutorAmount.CreateAmount(amount);
+            }
+            else
+            {
+                amount.Value = value;
+                sqlExecutorAmount.UpdateAmount(amount);
+            }
         }
 
         public void DeleteProduct(int id)

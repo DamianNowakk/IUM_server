@@ -46,14 +46,14 @@ namespace FridgeRestServer.Controllers
         }
 
         // POST: api/Product
-        public HttpResponseMessage Post([FromBody]Product product, string login, string password)
+        public HttpResponseMessage Post([FromBody]Product product, string login, string password, string guid)
         {
             HttpResponseMessage response;
             var user = _sqlExecutorUser.GetUser(login, password);
             if (user != null)
             {
                 product.UserLogin = login;
-                _sqlExecutorProduct.AddProduct(product);
+                _sqlExecutorProduct.AddProduct(product, guid);
                 response = Request.CreateResponse(HttpStatusCode.Created);
                 response.Headers.Location = new Uri(Request.RequestUri, $"Product/{product.Id}");
             }
@@ -84,13 +84,13 @@ namespace FridgeRestServer.Controllers
 
         // PUT:
         [Route("api/Product/{id}/UpdateAmount/{value}")]
-        public HttpResponseMessage Putincrease(int id,int value, string login, string password)
+        public HttpResponseMessage Putincrease(int id,int value, string login, string password, string guid)
         {
             HttpResponseMessage response;
             var user = _sqlExecutorUser.GetUser(login, password);
             if (user != null)
             {
-                _sqlExecutorProduct.UpdateAmount(id, value);
+                _sqlExecutorProduct.UpdateAmount(id, value, guid);
                 response = Request.CreateResponse(HttpStatusCode.OK);
             }
             else

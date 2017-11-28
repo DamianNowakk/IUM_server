@@ -5,9 +5,6 @@ BEGIN
 END  
 
 CREATE DATABASE FridgeDB;
-
-GO
-
 USE FridgeDB;
 
 CREATE TABLE Account (
@@ -20,12 +17,23 @@ CREATE TABLE Product (
 	userLogin varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
 	price decimal(16,2) NOT NULL,
-    amount integer NOT NULL,
 	CONSTRAINT fk_persons_id
 		FOREIGN KEY (userLogin)
 		REFERENCES Account(login) ON DELETE CASCADE
 );
 
+CREATE TABLE Amount (
+    guid varchar(255),
+	productId int NOT NULL,
+    value int NOT NULL,
+	primary key(guid, productId),
+	CONSTRAINT fk_product_id
+		FOREIGN KEY (productId)
+		REFERENCES Product(id) ON DELETE CASCADE
+);
+
+
+USE FridgeDB;
 
 INSERT INTO Account
 VALUES ( 'admin', 'admin');
@@ -33,17 +41,29 @@ VALUES ( 'admin', 'admin');
 INSERT INTO Account
 VALUES ( 'a', 'a');
 
-USE FridgeDB;
 
 INSERT INTO Product
-VALUES ( 'admin', 'test', 2.5, 5);
+VALUES ( 'admin', 'test', 2.5);
 INSERT INTO Product
-VALUES ( 'admin', 'test2', 1, 1);
+VALUES ( 'admin', 'test2', 1);
 INSERT INTO Product
-VALUES ( 'admin', 'test2', 1, 1);
+VALUES ( 'admin', 'test2', 1);
 INSERT INTO Product
-VALUES ( 'admin', 'test2', 1, 1);
+VALUES ( 'admin', 'test2', 1);
 INSERT INTO Product
-VALUES ( 'admin', 'test2', 1, 1);
+VALUES ( 'admin', 'test2', 1);
 INSERT INTO Product
-VALUES ( 'admin', 'hahahahha', 1, 1);
+VALUES ( 'admin', 'hahahahha', 1);
+
+INSERT INTO Amount
+VALUES ( 'dfghsf', 1, 1);
+INSERT INTO Amount
+VALUES ( 'qweqwe', 2, 1);
+INSERT INTO Amount
+VALUES ( 'qweqwe', 3, 1);
+INSERT INTO Amount
+VALUES ( 'qweqwe', 4, 1);
+INSERT INTO Amount
+VALUES ( 'qweqwe', 5, 1);
+INSERT INTO Amount
+VALUES ( 'qweqwe', 6, 1);
