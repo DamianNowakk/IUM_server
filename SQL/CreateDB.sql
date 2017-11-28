@@ -56,7 +56,11 @@ INSERT INTO Product
 VALUES ( 'admin', 'hahahahha', 1);
 
 INSERT INTO Amount
-VALUES ( 'dfghsf', 1, 1);
+VALUES ( 'dfggfdg', 1, 2);
+INSERT INTO Amount
+VALUES ( 'fdgvcbx', 1, 4);
+INSERT INTO Amount
+VALUES ( 'dferdgj', 1, -3);
 INSERT INTO Amount
 VALUES ( 'qweqwe', 2, 1);
 INSERT INTO Amount
