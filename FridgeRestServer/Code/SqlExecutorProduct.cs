@@ -90,7 +90,7 @@ namespace FridgeRestServer.Controllers
             }
             else
             {
-                amount.Value = value;
+                amount.Value += value;
                 sqlExecutorAmount.UpdateAmount(amount);
             }
         }
