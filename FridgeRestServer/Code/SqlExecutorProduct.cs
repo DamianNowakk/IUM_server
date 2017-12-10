@@ -54,7 +54,7 @@ namespace FridgeRestServer.Controllers
         {
             const string sqlQuery = "INSERT INTO Product(userLogin,name,price) values(@UserLogin,@Name,@Price); SELECT CAST(SCOPE_IDENTITY() as int)";
             var returnId = this.db.Query<int>(sqlQuery, product).SingleOrDefault();
-            sqlExecutorAmount.CreateAmount(returnId, guid);
+            sqlExecutorAmount.CreateAmount(returnId, guid, product.Amount);
             product.Id = returnId;
         }
 

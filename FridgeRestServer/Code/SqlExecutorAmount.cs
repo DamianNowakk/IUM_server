@@ -33,13 +33,13 @@ namespace FridgeRestServer.Code
         }
 
 
-        public void CreateAmount(int? id, string guid)
+        public void CreateAmount(int? id, string guid, int? value)
         {
             var amount = new Amount()
             {
                 Guid = guid,
                 ProductId = id,
-                Value = 0
+                Value = value ?? 0
             };
             CreateAmount(amount);
         }
